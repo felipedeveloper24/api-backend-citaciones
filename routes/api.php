@@ -30,6 +30,7 @@ Route::controller(trabajadorController::class) -> group(function(){
     Route::put('/trabajador/{id}',"update");
     Route::get("/trabajador/{id}","show");
     Route::delete("/trabajador/{id}","destroy");
+    Route::post("/data","obtenerdata");
 });
 
 Route::controller(turnosController::class) -> group(function(){
@@ -41,7 +42,10 @@ Route::controller(citacionController::class) -> group(function(){
     Route::post("/citacion","store");
     Route::get("/citaciones/{id}","join");
 });
-
 Route::controller(whatsappController::class) -> group(function(){
-    Route::post("/webhook","respuesta");
+    Route::post("/mensaje","mensaje");
+    Route::get("/verify","verify");
+    Route::post("/webhook","webhook");
+   
+    Route::get("/mensajes/{id}","mensajesTrabajador");
 });

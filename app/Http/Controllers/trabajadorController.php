@@ -43,6 +43,20 @@ class trabajadorController extends Controller
             "trabajador"=> $trabajador
         ]);
     }
+    public function update_trabajador($data_trabajador){
+        $trabajador = trabajadores::findOrFail($data_trabajador["id_trabajador"]);
+        $trabajador -> rut = $data_trabajador["rut"];
+        $trabajador -> nombre = $data_trabajador["nombre"];
+        $trabajador -> apellido =$data_trabajador["apellido"];
+        $trabajador -> correo = $data_trabajador["correo"];
+        $trabajador -> telefono = $data_trabajador["telefono"];
+        $trabajador -> id_estado = $data_trabajador["id_estado"];
+        $trabajador -> save();
+        
+        return response([
+            "mensaje"=> "trabajador actualizado!",
+        ]);
+    }
 
     public function destroy($id){
         trabajadores::destroy($id);
@@ -52,4 +66,8 @@ class trabajadorController extends Controller
         ]);
     }
 
+    public function obtenerdata (Request $request){
+
+        return $request;
+    }
 }
