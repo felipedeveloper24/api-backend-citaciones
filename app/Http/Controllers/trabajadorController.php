@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\TrabajadorRequest;
 use App\Models\trabajadores;
 use Illuminate\Http\Request;
 
@@ -11,7 +12,7 @@ class trabajadorController extends Controller
         return trabajadores::all();
     }
 
-    public function store(Request $request){
+    public function store(TrabajadorRequest $request){
         $trabajador = new trabajadores();
         $trabajador -> rut = $request -> rut;
         $trabajador -> nombre = $request -> nombre;
@@ -28,7 +29,7 @@ class trabajadorController extends Controller
         return $trabajador;
     }
 
-    public function update(Request $request, $id){
+    public function update(TrabajadorRequest $request, $id){
         $trabajador = trabajadores::findOrFail($id);
 
         $trabajador -> rut = $request -> rut;
@@ -69,5 +70,12 @@ class trabajadorController extends Controller
     public function obtenerdata (Request $request){
 
         return $request;
+    }
+    public function prueba(){
+        return (response()->json(
+            [
+                "mensaje"=> "Estamos consumiento api de intra!!!!!"
+            ]
+        ));
     }
 }

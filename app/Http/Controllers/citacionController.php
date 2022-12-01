@@ -29,9 +29,9 @@ class citacionController extends Controller
         $citacion -> id_trabajador = $request -> id_trabajador;
         $citacion -> id_turno = $request -> id_turno;
         $citacion -> save();
-
         return $citacion;
     }
+    
     public function store_citacion($data_citacion){
         $citacion = new citaciones();
         $citacion -> id_trabajador =  $data_citacion["id_trabajador"];

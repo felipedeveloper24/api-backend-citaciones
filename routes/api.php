@@ -31,6 +31,7 @@ Route::controller(trabajadorController::class) -> group(function(){
     Route::get("/trabajador/{id}","show");
     Route::delete("/trabajador/{id}","destroy");
     Route::post("/data","obtenerdata");
+    Route::get("/test","prueba");
 });
 
 Route::controller(turnosController::class) -> group(function(){
