@@ -44,3 +44,7 @@ Route::controller(whatsappController::class) -> group(function(){
    
     Route::get("/mensajes/{id}","mensajesTrabajador");
 });
+
+Route::get("/",function(){
+    view("welcome");
+});
