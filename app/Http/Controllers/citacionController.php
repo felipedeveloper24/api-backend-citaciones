@@ -43,4 +43,5 @@ class citacionController extends Controller
             "mensaje"=> "citación creada exitosamente"
         ]);
     }
+    
 }

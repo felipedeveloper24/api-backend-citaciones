@@ -9,6 +9,7 @@ use App\Models\citaciones;
 use Illuminate\Support\Facades\DB;
 use App\Models\Mensaje;
 use App\Models\trabajadores;
+use Exception;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 
@@ -85,6 +86,7 @@ class whatsappController extends Controller
         //Obtnemos el id del mensaje
         $data = $data -> messages[0]->id;
         //Guardamos el mensaje
+
         $mensaje = new Mensaje();
         $mensaje->id_trabajador = $request->id_trabajador;
         $mensaje->rut = $request -> rut;
@@ -103,36 +105,72 @@ class whatsappController extends Controller
             return response(Response::HTTP_NOT_FOUND);
         }        
     }
+
     public function verify(Request $request){//Funcion para verificar webhook
-        $mode = $request->query["hub.mode"];
-        $token = $request->query["hub.verify_token"];
-        $challenge = $request->query["hub.challenge"];
-      
-        if ($mode && $token) {
-          
-          if ($mode === "subscribe" && $token === "felipeopazo") {
-                return(response()-> json([
-                    "mensaje"=>"Webhook verificado".$challenge,
-                    Response::HTTP_OK
-                ]));
-          } else {
-                return response()->json([
-                    Response::HTTP_NOT_FOUND
-                ]);
-          }
+        
+        try{
+            $verifyToken = 'intra2022!';
+            $query = $request -> query();
+            $mode = $query["hub_mode"];
+            $token = $query["hub_verify_token"];
+            $challenge = $query["hub_challenge"];
+
+            if($mode && $token){
+                if($mode=="subscribe" && $token == $verifyToken){
+                    return response($challenge,200)-> header('Content-Type',"text/plain");
+                }
+            }
+            throw new Exception("Invalid request");
+
+        }catch(Exception $e){
+            return response()->json([
+                "success" => false,
+                "error" => $e->getMessage()
+            ],500);
         }
+
     }
 
     public function webhook(Request $request){
-        Log::info(["whatsapp ->"=>$request->all()]);
-        //Cuando obtenemos la respuesta del mensaje
-        //esta función debera descomponer el objeto para obtener el id del mensaje
-        //al obtener esto se hace una consulta sql preguntando por el id 
-        return $request;
+        $cambios = $request ->entry[0]["changes"];
+        if($cambios){
+            $changes = $cambios[0];
+            $values = $changes["value"];
+            if( array_key_exists("messages",$values) ){
+                $messages = $values ["messages"];
+                $context = $messages[0]["context"];
+                $id_mensaje = $context["id"];
+                $type =  $messages[0]["type"]; //Tipo de mensaje
+                if($type==="button"){         
+                    $obj_mns = $messages[0]["button"];
+                    $respuesta =$obj_mns["text"];
+                    
+                    Log::info(["ID_MENSAJE: "=>$id_mensaje,"Respuesta"=>$respuesta]);
+                    //Actualizamos el registro con la respuesta
+                    /*
+                    $sql = "update mensajes
+                    set respuesta='$respuesta' 
+                    WHERE wa_id = '$id_mensaje'";
+                    DB::update($sql);
+                    */
+                    Mensaje::where('wa_id',$id_mensaje)->update([
+                        "respuesta" => $respuesta
+                    ]);
+                    
+                    return response()->json([
+                        "id" => $id_mensaje,
+                        "mensaje"=>$respuesta
+                    ]);
+                }
+            }else{
+                return response()->json("Esta estructura no coincide");
+            }
+    
+        }
     }
     public function mensajesTrabajador(Request $request){
         $sql = "select * from mensajes where id_trabajador=$request->id order by created_at desc";
-        Log::info(["el request--> " => $request->all()]);
+      
         $citaciones = DB::select($sql);
 
         return $citaciones;

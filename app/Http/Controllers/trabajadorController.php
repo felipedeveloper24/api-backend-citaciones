@@ -29,15 +29,15 @@ class trabajadorController extends Controller
         return $trabajador;
     }
 
-    public function update(TrabajadorRequest $request, $id){
+    public function update(Request $request, $id){
         $trabajador = trabajadores::findOrFail($id);
-
-        $trabajador -> rut = $request -> rut;
-        $trabajador -> nombre = $request -> nombre;
-        $trabajador -> apellido = $request -> apellido;
-        $trabajador -> correo = $request -> correo;
-        $trabajador -> telefono = $request -> telefono;
-        $trabajador -> id_estado = $request -> id_estado;
+     
+        isset($request->rut) &&  $trabajador -> rut = $request -> rut;
+        isset($request->nombre) && $trabajador -> nombre = $request -> nombre;
+        isset($request->apellido) && $trabajador -> apellido = $request -> apellido;
+        isset($request->correo) && $trabajador -> correo = $request -> correo;
+        isset($request->telefono) && $trabajador -> telefono = $request -> telefono;
+        isset($request->id_estado) &&$trabajador -> id_estado = $request -> id_estado;
         $trabajador -> save();
         return response([
             "mensaje"=> "Datos actualizados exitosamente",

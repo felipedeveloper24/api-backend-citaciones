@@ -46,7 +46,7 @@ Route::controller(citacionController::class) -> group(function(){
 Route::controller(whatsappController::class) -> group(function(){
     Route::post("/mensaje","mensaje");
     Route::get("/verify","verify");
-    Route::post("/webhook","webhook");
+    Route::post("/verify","webhook");
    
     Route::get("/mensajes/{id}","mensajesTrabajador");
 });
